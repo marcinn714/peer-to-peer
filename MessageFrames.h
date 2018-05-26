@@ -21,7 +21,8 @@ public:
     size_t firstField;
     size_t secondField;
     size_t thirdField;
-    char hash[33];
+    static const int FILE_NAME_SIZE = 33;
+    char hash[FILE_NAME_SIZE];
 };
 
 

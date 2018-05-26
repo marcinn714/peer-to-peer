@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Command.h"
-#include "NetUtils.h"
+#include "netCommunication/NetUtils.h"
 #include "NetMainThread.h"
 #include "AddFile.h"
 #include "GetFile.h"

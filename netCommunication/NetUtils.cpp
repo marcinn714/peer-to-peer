@@ -8,8 +8,8 @@
 #include <cstring>
 #include <zconf.h>
 #include "NetUtils.h"
-#include "MessageFrames.h"
-#include "NetMainThread.h"
+#include "../MessageFrames.h"
+#include "../NetMainThread.h"
 
 bool NetUtils::sendInfoMsgUDP(InfoMessage * msg) {
     int commonSocketFd;
@@ -36,6 +36,34 @@ bool NetUtils::sendInfoMsgUDP(InfoMessage * msg) {
 
     close(commonSocketFd);
     return true;
+}
+
+bool NetUtils::sendBroadcastInfoMsgUDP(InfoMessage * msg, std::string broadcastAddress, unsigned port) {
+    int commonSocketFd;
+    struct sockaddr_in commonSocketAddrIn;
+    socklen_t slen = sizeof(commonSocketAddrIn);
+
+    //socket
+    if ((commonSocketFd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+        return false;
+
+    //broadcast
+    int broadcast = 1, option = 1;
+    if (setsockopt(commonSocketFd,SOL_SOCKET,SO_BROADCAST, &broadcast, sizeof(broadcast)) < 0)
+        return false;
+    if (setsockopt(commonSocketFd,SOL_SOCKET,SO_REUSEADDR, &option, sizeof(option)) < 0)
+        return false;
+
+    memset((char *) &commonSocketAddrIn, 0, sizeof(commonSocketAddrIn)); //wyzerowanie struktury adresu odbiorcy
+    commonSocketAddrIn.sin_family = AF_INET;
+    commonSocketAddrIn.sin_port = htons(port);
+
+    if (inet_aton(broadcastAddress.c_str() , &commonSocketAddrIn.sin_addr) == 0)//przypisanie adresu odbiorcy (broadcast)
+        return false;
+    if (sendto(commonSocketFd, msg, sizeof(*msg), 0, (struct sockaddr*) &commonSocketAddrIn, slen) < 0)
+        return false;
+
+    close(commonSocketFd);
 }
 
 
@@ -81,7 +109,7 @@ bool NetUtils::sendFileTCP(std::string hash, std::string* stringFile, struct in_
     size_t opcode = 301;
 
     write(sockfd, &opcode, sizeof(size_t));
-    write(sockfd, hash.c_str(), hash.size() + 1);
+    write(sockfd, hash.c_str(), InfoMessage::FILE_NAME_SIZE);
     write(sockfd, stringFile->c_str(), stringFile->size());
 
     close(sockfd);
@@ -163,4 +191,47 @@ std::string NetUtils::netIpToStringIp(struct in_addr ipNet) {
     char ipStr[20];
     inet_ntop(AF_INET, &ipNet, ipStr, INET_ADDRSTRLEN);
     return ipStr;
+}
+
+
+ssize_t NetUtils::receiveInfoMsgUDP(InfoMessage *msg, unsigned port,
+                                    struct sockaddr_in * commonSocketAddrIn ,unsigned int timeout) {
+    int commonSocketFd;
+    socklen_t slen = sizeof(*commonSocketAddrIn);
+
+    //receive udp socket
+    if ((commonSocketFd=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+        return 0;
+    // zero out the structure
+    memset((char *) commonSocketAddrIn, 0, sizeof(*commonSocketAddrIn));
+    commonSocketAddrIn->sin_family = AF_INET;
+    commonSocketAddrIn->sin_port = htons(port);
+    commonSocketAddrIn->sin_addr.s_addr = htonl(INADDR_ANY);
+
+    int option = 1;
+    if (setsockopt(commonSocketFd,SOL_SOCKET,SO_REUSEADDR, &option, sizeof(option)) < 0)
+        return 0;
+
+    if (timeout > 0) {
+        //recv first info about network in x secs, otherwise -> new network
+        struct timeval tv;
+        tv.tv_sec = timeout;
+        tv.tv_usec = 0;
+        if (setsockopt(commonSocketFd, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv)) < 0)
+            return  0;
+    }
+
+    //bind socket to port
+    if(bind(commonSocketFd , (struct sockaddr*)commonSocketAddrIn, sizeof(*commonSocketAddrIn) ) < 0){
+        return 0;
+    }
+
+    ssize_t recv_len;
+    if ((recv_len = recvfrom(commonSocketFd, msg, sizeof(*msg), 0, (struct sockaddr *) commonSocketAddrIn, &slen)) < 0 && !timeout) {
+        return 0;
+    }
+
+    close(commonSocketFd);
+
+    return recv_len;
 }

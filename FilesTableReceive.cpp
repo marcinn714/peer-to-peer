@@ -23,7 +23,7 @@ void FilesTableReceive::execute()
                 {
                     tmpHash.assign(&buf[i*32], 32);
                     std::cout<<"File name - ower: "
-                             << tmpHash <<  " - " << sendingIp.s_addr << std::endl;
+                             << tmpHash <<  " - " << NetUtils::netIpToStringIp(sendingIp)<< std::endl;
                     NetMainThread::getNodeInfo()->addFileToFilesInNetwork(tmpHash, sendingIp);
                 }
         }

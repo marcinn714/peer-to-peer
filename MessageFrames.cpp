@@ -9,7 +9,7 @@
 InfoMessage::InfoMessage(size_t _opcode, std::string fileName)
 {
     opcode = _opcode;
-    strncpy(hash, fileName.c_str(), 33);
+    strncpy(hash, fileName.c_str(), FILE_NAME_SIZE);
 }
 
 InfoMessage::InfoMessage(size_t _opcode) {
@@ -24,7 +24,7 @@ InfoMessage::InfoMessage(size_t _opcode, size_t nodeId, std::string _hash) {
     firstField = nodeId;
     secondField = 0;
     thirdField = 0;
-    strncpy(hash, _hash.c_str(), 33);
+    strncpy(hash, _hash.c_str(), FILE_NAME_SIZE);
 }
 
 InfoMessage::InfoMessage(size_t _opcode, size_t nodeCnt, size_t senderId) {
@@ -40,5 +40,5 @@ InfoMessage::InfoMessage(const InfoMessage & other)
     firstField = other.firstField;
     secondField = other.secondField;
     thirdField = other.thirdField;
-    strncpy(hash, other.hash, 33);
+    strncpy(hash, other.hash, FILE_NAME_SIZE);
 }

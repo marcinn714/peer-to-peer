@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "PrintP2PStats.h"
-#include "NetUtils.h"
+#include "netCommunication/NetUtils.h"
 #include "NetMainThread.h"
 
 

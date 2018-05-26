@@ -8,10 +8,10 @@ void ReceiveFileTcp::execute(void)
 {
     size_t ownerId;
     char buf[1024];
-    char hash[33];
+    char hash[InfoMessage::FILE_NAME_SIZE];
 
     int readBytes;
-    if ((readBytes = read(socketFd, hash, 33)) < 0) //read filename
+    if ((readBytes = read(socketFd, hash, InfoMessage::FILE_NAME_SIZE)) < 0) //read filename
         perror("reading stream message");
 
     std::ofstream newFile(hash, std::ios::out);

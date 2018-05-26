@@ -7,7 +7,7 @@
 
 #include "Command.h"
 #include <string>
-#include "NetUtils.h"
+#include "netCommunication/NetUtils.h"
 
 class AddFile: public Command
 {

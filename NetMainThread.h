@@ -7,10 +7,10 @@
 #include "Command.h"
 #include "NodeInfo.h"
 #include <string>
-#include "NetUtils.h"
+#include "netCommunication/NetUtils.h"
 
 #include "MessageFrames.h"
-#include "NetUtils.h"
+#include "netCommunication/NetUtils.h"
 #include "TcpMainService.h"
 #include "FilesTableSend.h"
 
@@ -22,6 +22,7 @@ private:
     struct sockaddr_in commonSocketAddrIn;
     pthread_t tcpThread;
     bool firstNode;
+    NetUtils *net;
 public:
     static NodeInfo * nodeInfo;
     static const unsigned port = 8888;
@@ -29,7 +30,7 @@ public:
     static const unsigned maxTimeToJoinP2P = 2;
 
 
-    NetMainThread() : broadcastAddress(NetUtils::getBroadcastAddress()), commonSocketFd(0), tcpThread(0), firstNode(false) {}
+    NetMainThread() : broadcastAddress(NetUtils::getBroadcastAddress()), commonSocketFd(0), tcpThread(0), firstNode(false) {net = new NetUtils();}
     virtual ~NetMainThread() { delete nodeInfo; }
 
     static NodeInfo * getNodeInfo(void);
