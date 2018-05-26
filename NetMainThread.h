@@ -19,7 +19,7 @@ class NetMainThread: public Command
 private:
     std::string broadcastAddress;
     int commonSocketFd;
-    struct sockaddr_in commonSocketAddrIn;
+    struct sockaddr_in  commonSocketAddrIn;
     pthread_t tcpThread;
     bool firstNode;
     NetUtils *net;

@@ -27,88 +27,14 @@
 
 NodeInfo* NetMainThread::nodeInfo;
 
-void NetMainThread::die(std::string s)
-{
-    perror(s.c_str());
-    pthread_cancel(tcpThread);
-    pthread_exit((void*)nullptr);
-}
-
 NodeInfo * NetMainThread::getNodeInfo(void){
     return nodeInfo;
 }
 
-void NetMainThread::setAndSendInfoMsgUDP(InfoMessage * msg, unsigned _port) {
-    socklen_t slen = sizeof(commonSocketAddrIn);
-
-    //socket
-    if ((commonSocketFd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
-        die("socket");
-
-    //broadcast
-    int broadcast = 1, option = 1;
-    if (setsockopt(commonSocketFd,SOL_SOCKET,SO_BROADCAST, &broadcast, sizeof(broadcast)) < 0)
-        die(strerror(errno));
-    if (setsockopt(commonSocketFd,SOL_SOCKET,SO_REUSEADDR, &option, sizeof(option)) < 0)
-        die(strerror(errno));
-
-    memset((char *) &commonSocketAddrIn, 0, sizeof(commonSocketAddrIn)); //wyzerowanie struktury adresu odbiorcy
-    commonSocketAddrIn.sin_family = AF_INET;
-    commonSocketAddrIn.sin_port = htons(_port);
-
-    if (inet_aton(broadcastAddress.c_str() , &commonSocketAddrIn.sin_addr) == 0)//przypisanie adresu odbiorcy (broadcast)
-        die("inet_aton");
-    if (sendto(commonSocketFd, msg, sizeof(*msg), 0, (struct sockaddr*) &commonSocketAddrIn, slen) < 0)
-        die("sendto");
-}
-
-void NetMainThread::setInfoMsgUDP(unsigned timeout, unsigned _port) {
-    //receive udp socket
-    if ((commonSocketFd=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
-        die("socket");
-    // zero out the structure
-    memset((char *) &commonSocketAddrIn, 0, sizeof(commonSocketAddrIn));
-    commonSocketAddrIn.sin_family = AF_INET;
-    commonSocketAddrIn.sin_port = htons(_port);
-    commonSocketAddrIn.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    int option = 1;
-    if (setsockopt(commonSocketFd,SOL_SOCKET,SO_REUSEADDR, &option, sizeof(option)) < 0)
-        die(strerror(errno));
-
-    if (timeout > 0) {
-        //recv first info about network in x secs, otherwise -> new network
-        struct timeval tv;
-        tv.tv_sec = timeout;
-        tv.tv_usec = 0;
-        if (setsockopt(commonSocketFd, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv)) < 0)
-            die(strerror(errno));
-    }
-
-    //bind socket to port
-    if(bind(commonSocketFd , (struct sockaddr*)&commonSocketAddrIn, sizeof(commonSocketAddrIn) ) < 0)
-        die("bind");
-}
-
-ssize_t NetMainThread::setAndReceiveInfoMsgUDP(unsigned timeout, InfoMessage * msg, unsigned _port) {
-    ssize_t recv_len;
-    socklen_t slen = sizeof(commonSocketAddrIn);
-    setInfoMsgUDP(timeout, _port);
-    if ((recv_len = recvfrom(commonSocketFd, msg, sizeof(*msg), 0, (struct sockaddr *) &commonSocketAddrIn, &slen)) < 0 && !timeout)
-        die("recvfrom");
-    return recv_len;
-}
-
 void NetMainThread::receiveNetworkMessages(void) {
-    if (nodeInfo == nullptr)
-        std::cout << "null" << std::endl;
     std::cout << "Net Main Thread's started" << std::endl;
     InfoMessage * msg = new InfoMessage();
-    socklen_t slen = sizeof(commonSocketAddrIn);
-    bool isMe = false;
-    setInfoMsgUDP(0, port);
-    //  while (NetUtils::receiveInfoMsgUDP(msg, port, &commonSocketAddrIn)) {
-    while (recvfrom(commonSocketFd, msg, sizeof(*msg), 0, (struct sockaddr *) &commonSocketAddrIn, &slen)) {
+    while (net->receiveInfoMsgUDP(msg, port, &commonSocketAddrIn)) {
         switch(msg->opcode) {
             case 100: //new node wants to join
             {
@@ -155,7 +81,6 @@ void NetMainThread::buildNetwork(void) {
     std::cout << "Didn't receive any response\nStart building new P2P network... ";
     nodeInfo = new NodeInfo();
     InfoMessage * msg = new InfoMessage(400); //if another node's waiting for response
-    //setAndSendInfoMsgUDP(msg, joinNetworkPort);
     net->sendBroadcastInfoMsgUDP(msg, broadcastAddress, joinNetworkPort);
     std::cout << "Completed" << std::endl;
     delete msg;
@@ -172,11 +97,7 @@ void NetMainThread::joinNetwork(InfoMessage * msg) {
         nodeInfo->addNewNode(commonSocketAddrIn.sin_addr);
     }
 
-    ssize_t recv_len;
-    socklen_t slen = sizeof(commonSocketAddrIn);
-//    while((recv_len = net->receiveInfoMsgUDP(msg, joinNetworkPort,
- //                                            &commonSocketAddrIn, 2)) > 0) {
-while ((recvfrom(commonSocketFd, msg, sizeof(*msg), 0, (struct sockaddr *) &commonSocketAddrIn, &slen)) > 0) {
+    while((net->receiveInfoMsgUDP(msg, joinNetworkPort, &commonSocketAddrIn, 2)) > 0) {
         if (msg->opcode == 200) { //msg about network (cnt, sender id, receiver id)
             nodeInfo->addNewNode(commonSocketAddrIn.sin_addr);
         }
@@ -187,18 +108,14 @@ int NetMainThread::init(void)
 {
     InfoMessage * msg = new InfoMessage(100);
     net->sendBroadcastInfoMsgUDP(msg, broadcastAddress, port);
-    //setAndSendInfoMsgUDP(msg, port);
     std::cout<<"Sent joining to network request" <<std::endl;
-    //close(commonSocketFd); //close udp socket for broadcast
 
     //receive udp socket
     std::cout<<"Waiting for response within " << maxTimeToJoinP2P << " seconds" <<std::endl;
-//    if (net->receiveInfoMsgUDP( msg, joinNetworkPort, &commonSocketAddrIn, maxTimeToJoinP2P) < 0)
-if ( setAndReceiveInfoMsgUDP(maxTimeToJoinP2P, msg, joinNetworkPort) < 0)
+    if (net->receiveInfoMsgUDP( msg, joinNetworkPort, &commonSocketAddrIn, maxTimeToJoinP2P) < 0)
         buildNetwork();
     else
         joinNetwork(msg);
-    close(commonSocketFd);
     delete msg;
     return 0;
 }
