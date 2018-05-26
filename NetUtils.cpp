@@ -81,7 +81,7 @@ bool NetUtils::sendFileTCP(std::string hash, std::string* stringFile, struct in_
     size_t opcode = 301;
 
     write(sockfd, &opcode, sizeof(size_t));
-    write(sockfd, hash.c_str(), hash.size() + 1);
+    write(sockfd, hash.c_str(), InfoMessage::FILE_NAME_SIZE);
     write(sockfd, stringFile->c_str(), stringFile->size());
 
     close(sockfd);
