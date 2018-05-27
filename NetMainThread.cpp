@@ -47,6 +47,9 @@ void NetMainThread::receiveNetworkMessages(void) {
             case 101: //node wants to leave (this node or another)
             {
                 nodeInfo->removeNode(commonSocketAddrIn.sin_addr);
+                pthread_cancel(tcpThread);
+                Command::exitCommand(this);
+                break;
             }
             case 102: //other node wants local files table
             {
