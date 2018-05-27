@@ -5,7 +5,7 @@
 #ifndef FILESTABLESEND_H_
 #define FILESTABLESEND_H_
 
-#include "Command.h"
+#include "Command.hpp"
 #include <sstream>
 #include <string>
 #include <sys/types.h>

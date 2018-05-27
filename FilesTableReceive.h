@@ -5,7 +5,7 @@
 #ifndef FILESTABLERECEIVE_H_
 #define FILESTABLERECEIVE_H_
 
-#include "Command.h"
+#include "Command.hpp"
 #include <cstdlib>
 #include <string.h>
 #include <unistd.h>

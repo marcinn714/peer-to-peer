@@ -5,7 +5,7 @@
 #ifndef PRINTP2PSTATS_H_
 #define PRINTP2PSTATS_H_
 
-#include "Command.h"
+#include "Command.hpp"
 #include <arpa/inet.h>
 #include <functional>
 

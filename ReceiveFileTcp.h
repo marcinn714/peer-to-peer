@@ -5,7 +5,7 @@
 #ifndef RECEIVEFILETCP_H_
 #define RECEIVEFILETCP_H_
 
-#include "Command.h"
+#include "Command.hpp"
 #include <cstdlib>
 #include <string.h>
 #include <unistd.h>

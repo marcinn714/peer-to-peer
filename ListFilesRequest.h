@@ -5,10 +5,10 @@
 #ifndef LISTFILESREQUEST_H_
 #define LISTFILESREQUEST_H_
 
-#include "Command.h"
-#include "MessageFrames.h"
+#include "Command.hpp"
+#include "messages/MessageFrames.h"
 #include "NetMainThread.h"
-#include "MessageFrames.h"
+#include "messages/MessageFrames.h"
 #include "NetMainThread.h"
 #include "NodeInfo.h"
 #include <cstdlib>

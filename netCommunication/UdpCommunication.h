@@ -7,7 +7,7 @@
 
 #include <string>
 #include <netinet/in.h>
-#include "../MessageFrames.h"
+#include "../messages/MessageFrames.h"
 
 class UdpCommunication {
 public:

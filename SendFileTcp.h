@@ -2,8 +2,8 @@
 #define SRC_SENDFILETCP_H_
 
 #include <netinet/in.h>
-#include "Command.h"
-#include "MessageFrames.h"
+#include "Command.hpp"
+#include "messages/MessageFrames.h"
 
 class SendFileTcp: public Command {
 public:

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Command.h"
+#include "Command.hpp"
 #include "netCommunication/NetUtils.h"
 #include "NetMainThread.h"
 #include "AddFile.hpp"

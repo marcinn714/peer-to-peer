@@ -4,12 +4,12 @@
 
 #ifndef TIN_NETMAINTHREAD_H
 #define TIN_NETMAINTHREAD_H
-#include "Command.h"
+#include "Command.hpp"
 #include "NodeInfo.h"
 #include <string>
 #include "netCommunication/NetUtils.h"
 
-#include "MessageFrames.h"
+#include "messages/MessageFrames.h"
 #include "netCommunication/NetUtils.h"
 #include "TcpMainService.h"
 #include "FilesTableSend.h"

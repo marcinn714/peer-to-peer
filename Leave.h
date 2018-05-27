@@ -4,7 +4,7 @@
 #ifndef SRC_LEAVE_H_
 #define SRC_LEAVE_H_
 
-#include "Command.h"
+#include "Command.hpp"
 #include "netCommunication/UdpCommunication.h"
 
 class Leave: public Command {

@@ -6,7 +6,6 @@
 
 void ReceiveFileTcp::execute(void)
 {
-    size_t ownerId;
     char buf[1024];
     char hash[InfoMessage::FILE_NAME_SIZE];
 

@@ -8,7 +8,7 @@
 #include <cstring>
 #include <zconf.h>
 #include "NetUtils.h"
-#include "../MessageFrames.h"
+#include "../messages/MessageFrames.h"
 #include "../NetMainThread.h"
 
 std::string NetUtils::getSelfIpAddress(void)

@@ -5,7 +5,7 @@
 #ifndef ADDNODE_H_
 #define ADDNODE_H_
 
-#include "Command.h"
+#include "Command.hpp"
 #include <string>
 #include "netCommunication/NetUtils.h"
 #include "NetMainThread.h"

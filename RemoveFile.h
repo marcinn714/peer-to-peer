@@ -6,7 +6,7 @@
 #define TIN_REMOVEFILE_H
 
 
-#include "Command.h"
+#include "Command.hpp"
 
 class RemoveFile: public Command {
 private:

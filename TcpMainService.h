@@ -6,12 +6,12 @@
 #define TIN_TCPMAINSERVICE_H
 
 
-#include "Command.h"
+#include "Command.hpp"
 #include <cstdlib>
 #include <pthread.h>
 #include <string>
 #include <unistd.h>
-#include "MessageFrames.h"
+#include "messages/MessageFrames.h"
 #include "FilesTableReceive.h"
 #include "ReceiveFileTcp.h"
 #include "netCommunication/TcpCommunication.h"

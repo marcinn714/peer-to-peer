@@ -22,7 +22,7 @@
 #include <net/if.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
-#include "MessageFrames.h"
+#include "messages/MessageFrames.h"
 #include "SendFileTcp.h"
 
 NodeInfo* NetMainThread::nodeInfo;

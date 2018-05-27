@@ -73,3 +73,4 @@ void TcpCommunication::createAndConfigureSocket() {
 void TcpCommunication::closeSocket() {
     close(sock);
 }
+

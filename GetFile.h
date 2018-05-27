@@ -5,7 +5,7 @@
 #ifndef SRC_GETFILE_H_
 #define SRC_GETFILE_H_
 
-#include "Command.h"
+#include "Command.hpp"
 #include "netCommunication/UdpCommunication.h"
 #include <string>
 
