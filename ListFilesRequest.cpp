@@ -20,21 +20,11 @@ void ListFilesRequest::execute(void)
 {
     if (NetMainThread::getNodeInfo() == nullptr)
         return;
-    //socket
-    if ((commonSocketFd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0){
-        Command::printErrAndDie(this, "socket");
-        std::cout<<"List request - socket create - failed..."<<std::endl;
-    }
 
-    memset((char *) &commonSocketAddrIn, 0, sizeof(commonSocketAddrIn));
-    commonSocketAddrIn.sin_family = AF_INET;
-    commonSocketAddrIn.sin_port = htons(NetMainThread::port);
 
+    InfoMessage *msg = new InfoMessage(102);
     NodeInfo * nInfo = NetMainThread::getNodeInfo();
     for(auto addr : nInfo->getAllNodes()) {
-        struct in_addr ip;
-        std::string a = addr;
-        inet_pton(AF_INET, a.c_str(), &ip);
-        sendInfoMsgUDP(&ip);
+        NetUtils::sendInfoMsgUDP(msg, NetUtils::stringIpToNetIp(addr), NetMainThread::port);
     }
 }
