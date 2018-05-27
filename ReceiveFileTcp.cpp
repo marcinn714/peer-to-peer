@@ -27,6 +27,6 @@ void ReceiveFileTcp::execute(void)
     std::string fileHash(hash);
     if (opcode == 301)
         NetMainThread::getNodeInfo()->addLocalFile(fileHash);
-    std::cout << "Added new file:\n\tFile's name: " << fileHash;
+    std::cout << "Added new file: " << fileHash;
     close(socketFd);
 }

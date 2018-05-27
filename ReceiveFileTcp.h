@@ -25,8 +25,6 @@ public:
             opcode(_opcode), socketFd(_socketFd) {};
 
     virtual ~ReceiveFileTcp() {};
-
-    void updateNodeInfo(std::string hash, size_t fileId);
     void execute(void);
     bool reqSeparateThread(void) {	return true; }
 

@@ -10,5 +10,6 @@ void RemoveFile::execute()
     if (NetMainThread::getNodeInfo() == nullptr)
         return;
 
-    NetMainThread::getNodeInfo();
+    NodeInfo *nInfo = NetMainThread::getNodeInfo();
+    nInfo->removeLocalFile(param);
 }

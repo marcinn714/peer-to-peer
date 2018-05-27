@@ -27,6 +27,12 @@
 
 NodeInfo* NetMainThread::nodeInfo;
 
+NetMainThread::NetMainThread(): tcpThread(0), firstNode(false) {
+    udpCommunication = new UdpCommunication();
+}
+
+
+
 NodeInfo * NetMainThread::getNodeInfo(void){
     return nodeInfo;
 }
@@ -34,19 +40,19 @@ NodeInfo * NetMainThread::getNodeInfo(void){
 void NetMainThread::receiveNetworkMessages(void) {
     std::cout << "Net Main Thread's started" << std::endl;
     InfoMessage * msg = new InfoMessage();
-    while (udpCommunication->receiveInfoMsgUDP(msg, port, &commonSocketAddrIn)) {
+    while (udpCommunication->receiveInfoMsgUDP(msg, port, &socketAddrIn)) {
         switch(msg->opcode) {
             case 100: //new node wants to join
             {
 
                 msg->opcode = 200;
-                udpCommunication->sendInfoMsgUDP(msg, commonSocketAddrIn.sin_addr, joinNetworkPort);
-                nodeInfo->addNewNode(commonSocketAddrIn.sin_addr);
+                udpCommunication->sendInfoMsgUDP(msg, socketAddrIn.sin_addr, joinNetworkPort);
+                nodeInfo->addNewNode(socketAddrIn.sin_addr);
                 break;
             }
             case 101: //node wants to leave (this node or another)
             {
-                nodeInfo->removeNode(commonSocketAddrIn.sin_addr);
+                nodeInfo->removeNode(socketAddrIn.sin_addr);
                 pthread_cancel(tcpThread);
                 Command::exitCommand(this);
                 break;
@@ -54,7 +60,7 @@ void NetMainThread::receiveNetworkMessages(void) {
             case 102: //other node wants local files table
             {
                 pthread_t thread;
-                Command * sendFilesTable = new FilesTableSend(commonSocketAddrIn.sin_addr);
+                Command * sendFilesTable = new FilesTableSend(socketAddrIn.sin_addr);
                 pthread_create(&thread, 0, Command::commandExeWrapper, static_cast<void *>(sendFilesTable));
                 pthread_detach(thread);
                 break;
@@ -62,7 +68,7 @@ void NetMainThread::receiveNetworkMessages(void) {
             case 103: //other node wants to get file from this node's local files
             {
                 pthread_t thread;
-                Command* sendFileTcp = new SendFileTcp(*msg, commonSocketAddrIn.sin_addr);
+                Command* sendFileTcp = new SendFileTcp(*msg, socketAddrIn.sin_addr);
                 pthread_create(&thread, NULL, Command::commandExeWrapper, static_cast<void *>(sendFileTcp));
                 pthread_detach(thread);
                 break;
@@ -97,12 +103,12 @@ void NetMainThread::joinNetwork(InfoMessage * msg) {
     firstNode = false;
     if (msg->opcode == 200) {
         nodeInfo = new NodeInfo();
-        nodeInfo->addNewNode(commonSocketAddrIn.sin_addr);
+        nodeInfo->addNewNode(socketAddrIn.sin_addr);
     }
 
-    while((udpCommunication->receiveInfoMsgUDP(msg, joinNetworkPort, &commonSocketAddrIn, 2)) > 0) {
+    while((udpCommunication->receiveInfoMsgUDP(msg, joinNetworkPort, &socketAddrIn, 2)) > 0) {
         if (msg->opcode == 200) { //msg about network (cnt, sender id, receiver id)
-            nodeInfo->addNewNode(commonSocketAddrIn.sin_addr);
+            nodeInfo->addNewNode(socketAddrIn.sin_addr);
         }
     }
 }
@@ -115,7 +121,7 @@ int NetMainThread::init(void)
 
     //receive udp socket
     std::cout<<"Waiting for response within " << maxTimeToJoinP2P << " seconds" <<std::endl;
-    if (udpCommunication->receiveInfoMsgUDP( msg, joinNetworkPort, &commonSocketAddrIn, maxTimeToJoinP2P) < 0)
+    if (udpCommunication->receiveInfoMsgUDP( msg, joinNetworkPort, &socketAddrIn, maxTimeToJoinP2P) < 0)
         buildNetwork();
     else
         joinNetwork(msg);

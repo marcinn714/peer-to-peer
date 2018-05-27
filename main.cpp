@@ -3,7 +3,7 @@
 #include "Command.h"
 #include "netCommunication/NetUtils.h"
 #include "NetMainThread.h"
-#include "AddFile.h"
+#include "AddFile.hpp"
 #include "GetFile.h"
 #include "RemoveFile.h"
 #include "ListFilesRequest.h"
