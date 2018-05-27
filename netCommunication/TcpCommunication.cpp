@@ -6,7 +6,7 @@
 #include "../NetMainThread.h"
 
 
-bool TcpCommunication::sendFileTCP(std::string hash, std::string* stringFile, struct in_addr ip) {
+bool TcpCommunication::sendFileTCP(std::string fileName, std::string* stringFile, struct in_addr ip) {
     int sockfd = 0;
     struct sockaddr_in serv_addr;
 
@@ -23,7 +23,7 @@ bool TcpCommunication::sendFileTCP(std::string hash, std::string* stringFile, st
     size_t opcode = 301;
 
     write(sockfd, &opcode, sizeof(size_t));
-    write(sockfd, hash.c_str(), InfoMessage::FILE_NAME_SIZE);
+    write(sockfd, fileName.c_str(), InfoMessage::FILE_NAME_SIZE);
     write(sockfd, stringFile->c_str(), stringFile->size());
 
     close(sockfd);
@@ -78,3 +78,24 @@ ssize_t TcpCommunication::readData(int socket, char *fileName, int size) {
     return read(socket, fileName, size);
 }
 
+bool TcpCommunication::sendFilesTable(std::string *stringData, struct in_addr targetNodeIP) {
+    int sockfd = 0;
+    struct sockaddr_in serv_addr;
+
+    if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        return false;
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(NetMainThread::port);
+    serv_addr.sin_addr = targetNodeIP;
+
+    if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+        return false;
+
+    size_t opcode = 300;
+    write(sockfd, &opcode, sizeof(size_t));
+    write(sockfd, stringData->c_str(), stringData->size());
+
+    close(sockfd);
+    return true;
+}

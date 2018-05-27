@@ -16,15 +16,16 @@
 FilesTableSend::FilesTableSend(struct in_addr _targetNodeIP)
 {
     targetNodeIP = _targetNodeIP;
+    tcpCommunication = new TcpCommunication();
 }
 
-void FilesTableSend::insertData(std::string hash)
+void FilesTableSend::insertData(std::string fileName)
 {
-    int numberToAdd = 32 - hash.length();
+    int numberToAdd = 32 - fileName.length();
     if (numberToAdd != 0)
-        hash.append(numberToAdd, 0);
+        fileName.append(numberToAdd, 0);
 
-    fileTableData << hash;
+    fileTableData << fileName;
 }
 
 void FilesTableSend::execute(void)
@@ -34,27 +35,5 @@ void FilesTableSend::execute(void)
         insertData(file);
     }
     std::string filesData = fileTableData.str();
-    sendFilesTableTCP(&filesData);
-}
-
-void FilesTableSend::sendFilesTableTCP(std::string* stringData) {
-    int sockfd = 0;
-    struct sockaddr_in serv_addr;
-
-    if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        Command::printErrAndDie(this, "socket");
-
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(NetMainThread::port);
-    serv_addr.sin_addr = targetNodeIP;
-
-    //inet_pton(AF_INET, "192.168.56.101", &serv_addr.sin_addr); //test
-    if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        Command::printErrAndDie(this, "connect");
-
-    size_t opcode = 300;
-    write(sockfd, &opcode, sizeof(size_t));
-    write(sockfd, stringData->c_str(), stringData->size());
-
-    close(sockfd);
+    tcpCommunication->sendFilesTable(&filesData, targetNodeIP);
 }

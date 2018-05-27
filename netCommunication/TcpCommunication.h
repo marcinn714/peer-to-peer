@@ -14,10 +14,11 @@
 
 class TcpCommunication {
 public:
-    static bool sendFileTCP(std::string hash, std::string* stringFile, struct in_addr ip);
+    static bool sendFileTCP(std::string fileName, std::string* stringFile, struct in_addr ip);
     size_t receiveOpcode(int  *mgsock, struct sockaddr_in *client);
     void createAndConfigureSocket();
     ssize_t readData(int socket, char *fileName, int size);
+    bool sendFilesTable(std::string* stringData, struct in_addr targetNodeIP);
     void closeSocket();
 private:
     int sock;

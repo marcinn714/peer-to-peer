@@ -8,7 +8,7 @@
 #include "RemoveFile.h"
 #include "ListFilesRequest.h"
 #include "Leave.h"
-#include "PrintP2PStats.h"
+#include "PrintStats.h"
 
 
 #include <iostream>
@@ -46,7 +46,7 @@ Command * newTerminalCommand(std::string textCommand)
     else if (textCommand == "leave")
         outCommand = new Leave();
     else if(textCommand == "stat")
-        outCommand = new PrintP2PStats();
+        outCommand = new PrintStats();
     else if(textCommand == "info") {
         std::cout << availableCommands;
         outCommand = nullptr;

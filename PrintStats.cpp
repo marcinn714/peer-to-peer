@@ -3,17 +3,17 @@
 //
 
 #include <iostream>
-#include "PrintP2PStats.h"
+#include "PrintStats.h"
 #include "netCommunication/NetUtils.h"
 #include "NetMainThread.h"
 
 
-void PrintP2PStats::execute(void)
+void PrintStats::execute(void)
 {
     if (NetMainThread::getNodeInfo() == nullptr)
         return;
     NodeInfo * nodeInfo = NetMainThread::getNodeInfo();
-    std::cout << "\nP2P network statistics: "<< std::endl;
+    std::cout << "\nNetwork statistics: "<< std::endl;
     for (auto addr : nodeInfo->getAllNodes()) {
         std::cout << addr << std::endl;
     }

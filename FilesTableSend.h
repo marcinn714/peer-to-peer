@@ -6,6 +6,7 @@
 #define FILESTABLESEND_H_
 
 #include "Command.hpp"
+#include "netCommunication/TcpCommunication.h"
 #include <sstream>
 #include <string>
 #include <sys/types.h>
@@ -23,10 +24,10 @@ public:
     void execute(void);
     bool reqSeparateThread(void) {	return true;	};
 private:
-    void insertData(std::string hash);
-    void sendFilesTableTCP(std::string* stringData);
+    void insertData(std::string fileName);
     std::stringstream fileTableData;
     struct in_addr targetNodeIP;
+    TcpCommunication * tcpCommunication;
 };
 
 #endif /* FILESTABLESEND_H_ */
