@@ -15,7 +15,11 @@
 class TcpCommunication {
 public:
     static bool sendFileTCP(std::string hash, std::string* stringFile, struct in_addr ip);
-    static size_t receiveOpcode(int socket, struct sockaddr_in client);
+    size_t receiveOpcode(int  *mgsock, struct sockaddr_in *client);
+    void createAndConfigureSocket();
+    void closeSocket();
+private:
+    int sock;
 };
 
 

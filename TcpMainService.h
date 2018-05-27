@@ -14,11 +14,12 @@
 #include "MessageFrames.h"
 #include "FilesTableReceive.h"
 #include "ReceiveFileTcp.h"
+#include "netCommunication/TcpCommunication.h"
 
 class TcpMainService: public Command
 {
 public:
-    TcpMainService() = default;
+    TcpMainService() {tcpCommunication = new TcpCommunication();}
     virtual ~TcpMainService() = default;
 
     void execute(void);
@@ -27,6 +28,7 @@ public:
 private:
     Command * getCommand(size_t opcode, int socketFd, struct in_addr requestingIp);
     void tcpServiceLoop(void);
+    TcpCommunication * tcpCommunication;
 };
 
 

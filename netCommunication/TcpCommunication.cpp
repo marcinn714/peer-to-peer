@@ -30,12 +30,28 @@ bool TcpCommunication::sendFileTCP(std::string hash, std::string* stringFile, st
     return true;
 }
 
-size_t TcpCommunication::receiveOpcode(int socket, struct sockaddr_in client) {
-    int sock, readBytes;
-    struct sockaddr_in server;
+size_t TcpCommunication::receiveOpcode(int * msgsock, struct sockaddr_in *client) {
     size_t opcode;
+    int readBytes;
+    unsigned addrlen = sizeof(*client);
+    if ((*msgsock = accept(sock, (struct sockaddr *) client, &addrlen)) < 0) {
+        perror("accept");
+    } else {
+        memset(&opcode, 0, sizeof(opcode));
+        if ((readBytes = read(*msgsock, &opcode, sizeof(size_t))) == -1)
+            perror("reading stream message");
+        if (readBytes == 0)
+            std::cout << "Ending connection" << std::endl;
+        else
+            return opcode;
+    }
+    return 0;
+}
 
-    //sock = socket(AF_INET, SOCK_STREAM, 0);
+void TcpCommunication::createAndConfigureSocket() {
+    struct sockaddr_in server;
+
+    sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
         perror("opening stream socket");
         exit(1);
@@ -52,4 +68,8 @@ size_t TcpCommunication::receiveOpcode(int socket, struct sockaddr_in client) {
     }
     // Start listen on tcp socket
     listen(sock, 5);
+}
+
+void TcpCommunication::closeSocket() {
+    close(sock);
 }
