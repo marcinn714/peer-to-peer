@@ -17,20 +17,20 @@
 #include <fstream>
 #include <iostream>
 #include "NetMainThread.h"
+#include "netCommunication/TcpCommunication.h"
 
 class ReceiveFileTcp: public Command
 {
 public:
-    explicit ReceiveFileTcp(size_t _opcode, int _socketFd) :
-            opcode(_opcode), socketFd(_socketFd) {};
+    ReceiveFileTcp(int _socket) : socket(_socket) {tcpCommunication = new TcpCommunication();};
 
     virtual ~ReceiveFileTcp() {};
     void execute(void);
     bool reqSeparateThread(void) {	return true; }
 
 private:
-    size_t opcode;
-    int socketFd;
+    int socket;
+    TcpCommunication *tcpCommunication;
 };
 
 #endif /* RECEIVEFILETCP_H_ */

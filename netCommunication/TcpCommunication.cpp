@@ -74,3 +74,7 @@ void TcpCommunication::closeSocket() {
     close(sock);
 }
 
+ssize_t TcpCommunication::readData(int socket, char *fileName, int size) {
+    return read(socket, fileName, size);
+}
+

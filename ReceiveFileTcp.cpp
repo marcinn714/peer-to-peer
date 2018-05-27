@@ -7,25 +7,22 @@
 void ReceiveFileTcp::execute(void)
 {
     char buf[1024];
-    char hash[InfoMessage::FILE_NAME_SIZE];
+    char fileName[InfoMessage::FILE_NAME_SIZE];
 
     int readBytes;
-    if ((readBytes = read(socketFd, hash, InfoMessage::FILE_NAME_SIZE)) < 0) //read filename
+    if (tcpCommunication->readData(socket, fileName, InfoMessage::FILE_NAME_SIZE) < 0) //read filename
         perror("reading stream message");
 
-    std::ofstream newFile(hash, std::ios::out);
+    std::ofstream newFile(fileName, std::ios::out);
     do {
         memset(buf, 0, sizeof(buf));
-        if ((readBytes = read(socketFd, buf, 1024)) < 0)
+        if ((readBytes = tcpCommunication->readData(socket, buf, 1024)) < 0)
             perror("reading stream message");
         if (readBytes != 0)
             newFile.write(buf, readBytes);
     } while (readBytes != 0);
 
     newFile.close();
-    std::string fileHash(hash);
-    if (opcode == 301)
-        NetMainThread::getNodeInfo()->addLocalFile(fileHash);
-    std::cout << "Added new file: " << fileHash;
-    close(socketFd);
+    std::cout << "Added new file: " << fileName;
+    close(socket);
 }

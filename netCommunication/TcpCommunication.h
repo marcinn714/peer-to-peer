@@ -17,6 +17,7 @@ public:
     static bool sendFileTCP(std::string hash, std::string* stringFile, struct in_addr ip);
     size_t receiveOpcode(int  *mgsock, struct sockaddr_in *client);
     void createAndConfigureSocket();
+    ssize_t readData(int socket, char *fileName, int size);
     void closeSocket();
 private:
     int sock;
