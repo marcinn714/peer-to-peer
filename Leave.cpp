@@ -10,6 +10,6 @@ void Leave::execute(void) {
         return;
 
     InfoMessage* msg = new InfoMessage(101);
-    NetUtils::sendInfoMsgUDP(msg);
+    udpCommunication->sendBroadcastInfoMsgUDP(msg, NetMainThread::port);
     delete msg;
 }

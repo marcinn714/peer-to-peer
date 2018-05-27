@@ -34,13 +34,13 @@ NodeInfo * NetMainThread::getNodeInfo(void){
 void NetMainThread::receiveNetworkMessages(void) {
     std::cout << "Net Main Thread's started" << std::endl;
     InfoMessage * msg = new InfoMessage();
-    while (net->receiveInfoMsgUDP(msg, port, &commonSocketAddrIn)) {
+    while (udpCommunication->receiveInfoMsgUDP(msg, port, &commonSocketAddrIn)) {
         switch(msg->opcode) {
             case 100: //new node wants to join
             {
 
                 msg->opcode = 200;
-                net->sendInfoMsgUDP(msg, commonSocketAddrIn.sin_addr, joinNetworkPort);
+                udpCommunication->sendInfoMsgUDP(msg, commonSocketAddrIn.sin_addr, joinNetworkPort);
                 nodeInfo->addNewNode(commonSocketAddrIn.sin_addr);
                 break;
             }
@@ -81,7 +81,7 @@ void NetMainThread::buildNetwork(void) {
     std::cout << "Didn't receive any response\nStart building new P2P network... ";
     nodeInfo = new NodeInfo();
     InfoMessage * msg = new InfoMessage(400); //if another node's waiting for response
-    net->sendBroadcastInfoMsgUDP(msg, broadcastAddress, joinNetworkPort);
+    udpCommunication->sendBroadcastInfoMsgUDP(msg, joinNetworkPort);
     std::cout << "Completed" << std::endl;
     delete msg;
 }
@@ -97,7 +97,7 @@ void NetMainThread::joinNetwork(InfoMessage * msg) {
         nodeInfo->addNewNode(commonSocketAddrIn.sin_addr);
     }
 
-    while((net->receiveInfoMsgUDP(msg, joinNetworkPort, &commonSocketAddrIn, 2)) > 0) {
+    while((udpCommunication->receiveInfoMsgUDP(msg, joinNetworkPort, &commonSocketAddrIn, 2)) > 0) {
         if (msg->opcode == 200) { //msg about network (cnt, sender id, receiver id)
             nodeInfo->addNewNode(commonSocketAddrIn.sin_addr);
         }
@@ -107,12 +107,12 @@ void NetMainThread::joinNetwork(InfoMessage * msg) {
 int NetMainThread::init(void)
 {
     InfoMessage * msg = new InfoMessage(100);
-    net->sendBroadcastInfoMsgUDP(msg, broadcastAddress, port);
+    udpCommunication->sendBroadcastInfoMsgUDP(msg, port);
     std::cout<<"Sent joining to network request" <<std::endl;
 
     //receive udp socket
     std::cout<<"Waiting for response within " << maxTimeToJoinP2P << " seconds" <<std::endl;
-    if (net->receiveInfoMsgUDP( msg, joinNetworkPort, &commonSocketAddrIn, maxTimeToJoinP2P) < 0)
+    if (udpCommunication->receiveInfoMsgUDP( msg, joinNetworkPort, &commonSocketAddrIn, maxTimeToJoinP2P) < 0)
         buildNetwork();
     else
         joinNetwork(msg);

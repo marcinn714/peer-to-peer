@@ -15,6 +15,6 @@ void GetFile::execute(void) {
         param.append(numberToAdd, 0);
     }
 
-    NetUtils::sendInfoMsgUDP(msg, NetMainThread::getNodeInfo()->getFileOwner(param), NetMainThread::port);
+    udpCommunication->sendInfoMsgUDP(msg, NetMainThread::getNodeInfo()->getFileOwner(param), NetMainThread::port);
     delete msg;
 }

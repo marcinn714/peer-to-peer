@@ -4,6 +4,7 @@
 
 #include "SendFileTcp.h"
 #include "NetMainThread.h"
+#include "netCommunication/TcpCommunication.h"
 
 #include <string>
 
@@ -20,5 +21,5 @@ void SendFileTcp::execute(void) {
 
     fileStr.assign((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>()); //copy file to string
 
-    NetUtils::sendFileTCP(msg.hash, &fileStr, ip);
+    TcpCommunication::sendFileTCP(msg.hash, &fileStr, ip);
 }

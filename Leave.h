@@ -5,14 +5,18 @@
 #define SRC_LEAVE_H_
 
 #include "Command.h"
+#include "netCommunication/UdpCommunication.h"
 
 class Leave: public Command {
 public:
-    Leave() {}
-    virtual ~Leave() {}
+    Leave() { udpCommunication = new UdpCommunication();}
+    virtual ~Leave() {delete udpCommunication;}
 
     void execute(void);
     bool reqSeparateThread(void) {return false;}
+
+private:
+    UdpCommunication *udpCommunication;
 };
 
 #endif /* SRC_LEAVE_H_ */

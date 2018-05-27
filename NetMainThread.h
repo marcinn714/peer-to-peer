@@ -13,6 +13,7 @@
 #include "netCommunication/NetUtils.h"
 #include "TcpMainService.h"
 #include "FilesTableSend.h"
+#include "netCommunication/UdpCommunication.h"
 
 class NetMainThread: public Command
 {
@@ -23,6 +24,7 @@ private:
     pthread_t tcpThread;
     bool firstNode;
     NetUtils *net;
+    UdpCommunication * udpCommunication;
 public:
     static NodeInfo * nodeInfo;
     static const unsigned port = 8888;
@@ -30,25 +32,19 @@ public:
     static const unsigned maxTimeToJoinP2P = 2;
 
 
-    NetMainThread() : broadcastAddress(NetUtils::getBroadcastAddress()), commonSocketFd(0), tcpThread(0), firstNode(false) {net = new NetUtils();}
+    NetMainThread() : broadcastAddress(NetUtils::getBroadcastAddress()), commonSocketFd(0), tcpThread(0), firstNode(false) {net = new NetUtils();
+    udpCommunication = new UdpCommunication();}
     virtual ~NetMainThread() { delete nodeInfo; }
 
     static NodeInfo * getNodeInfo(void);
-    void die(std::string s);
     void execute(void);
     bool reqSeparateThread(void) {return true;}
     int init(void);
     void buildNetwork(void);
-    void setAndSendInfoMsgUDP(InfoMessage * msg, unsigned _port);
-    void setInfoMsgUDP(unsigned timeout, unsigned _port);
-    ssize_t setAndReceiveInfoMsgUDP(unsigned timeout, InfoMessage * msg, unsigned _port);
 
 
     void receiveNetworkMessages(void);
     void joinNetwork(InfoMessage * req);
-
-
-
 };
 
 
