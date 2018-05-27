@@ -75,10 +75,8 @@ struct in_addr NetUtils::getMyIP() {
 }
 
 struct in_addr NetUtils::stringIpToNetIp(std::string ipStr) {
-    char *ipCh = new char[ipStr.length()+1];
-    std::copy(ipStr.begin(), ipStr.end(), ipCh);
     struct in_addr ipNet;
-    inet_ntop(AF_INET, &ipNet, ipCh, INET_ADDRSTRLEN);
+    inet_pton(AF_INET, ipStr.c_str(), &ipNet);
     return ipNet;
 }
 
