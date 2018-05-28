@@ -80,6 +80,10 @@ void NetMainThread::receiveNetworkMessages(void) {
                 delete this;
                 exit(1);
             }
+            case 401:
+            {
+                std::cout << "File no longer available" << std::endl;
+            }
         }
     }
     delete msg;

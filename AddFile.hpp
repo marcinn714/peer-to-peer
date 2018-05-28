@@ -17,6 +17,11 @@ public:
     virtual ~AddFile() {}
 
     void execute(void) {
+        std::ifstream file(param.c_str());
+        if (!file.is_open()) {
+            std::cout << "There is no such file in working directory" << std::endl;
+            return;
+        }
         NodeInfo* nodeInfo = NetMainThread::getNodeInfo();
         if (nodeInfo != nullptr) {
             nodeInfo->addLocalFile(param);

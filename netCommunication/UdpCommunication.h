@@ -12,7 +12,7 @@
 class UdpCommunication {
 public:
     UdpCommunication();
-    bool sendInfoMsgUDP(InfoMessage * msg, struct in_addr nodeAddr, unsigned port);
+    static bool sendInfoMsgUDP(InfoMessage * msg, struct in_addr nodeAddr, unsigned port);
     bool sendBroadcastInfoMsgUDP(InfoMessage * msg, unsigned port);
     ssize_t receiveInfoMsgUDP(InfoMessage * msg, unsigned port, struct sockaddr_in * commonSocketAddrIn, unsigned timeout = 0);
 private:

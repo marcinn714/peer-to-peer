@@ -23,6 +23,6 @@ void ReceiveFileTcp::execute(void)
     } while (readBytes != 0);
 
     newFile.close();
-    std::cout << "Added new file: " << fileName << std::flush;
+    std::cout << "Added new file: " << fileName  << std::endl << std::flush;
     close(socket);
 }
