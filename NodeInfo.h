@@ -28,6 +28,7 @@ public:
 
     void addNewNode(struct in_addr ip);
     void removeNode(struct in_addr ip);
+    bool containsRemoteFile(std::string filaName);
 
     void addFileToFilesInNetwork(std::string fileName, struct in_addr ip);
     void resetFilesInNetwork();

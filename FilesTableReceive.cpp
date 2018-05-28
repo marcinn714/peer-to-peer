@@ -13,6 +13,8 @@ void FilesTableReceive::execute()
     int readBytes;
     std::string fileName;
 
+    NetMainThread::getNodeInfo()->resetFilesInNetwork();
+
     do {
         memset(buf, 0, sizeof(buf));
         if ((readBytes = tcpCommunication->readData(socketFd,buf, bufSize)) == -1)

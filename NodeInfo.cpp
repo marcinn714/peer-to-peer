@@ -40,3 +40,7 @@ struct in_addr NodeInfo::getFileOwner(std::string fileName) {
 bool NodeInfo::containsLocalFile(std::string fileName) {
     return files.find(fileName) != files.end();
 }
+
+bool NodeInfo::containsRemoteFile(std::string fileName) {
+    return filesInNetwork.find(fileName) != filesInNetwork.end();
+}

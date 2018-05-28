@@ -15,6 +15,12 @@ void GetFile::execute(void) {
         param.append(numberToAdd, 0);
     }
 
+    if (!NetMainThread::getNodeInfo()->containsRemoteFile(param)) {
+        std::cout << "No such file in network" << std::endl;
+        return;
+    }
+
+
     udpCommunication->sendInfoMsgUDP(msg, NetMainThread::getNodeInfo()->getFileOwner(param), NetMainThread::port);
     delete msg;
 }
