@@ -8,23 +8,23 @@
 
 void FilesTableReceive::execute()
 {
-    const unsigned bufSize = 25*32; // 32 is size of hash (string)
+    const unsigned bufSize = 25*32; // 32 is size of fileName (string)
     char buf[bufSize];
     int readBytes;
-    std::string tmpHash;
+    std::string fileName;
 
     do {
         memset(buf, 0, sizeof(buf));
-        if ((readBytes = read(socketFd,buf, bufSize)) == -1)
+        if ((readBytes = tcpCommunication->readData(socketFd,buf, bufSize)) == -1)
             perror("reading stream message");
         if (readBytes != 0)
         {
                 for(unsigned i = 0; i < (unsigned)readBytes/32; ++i)
                 {
-                    tmpHash.assign(&buf[i*32], 32);
+                    fileName.assign(&buf[i*32], 32);
                     std::cout<<"File name - ower: "
-                             << tmpHash <<  " - " << NetUtils::netIpToStringIp(sendingIp)<< std::endl;
-                    NetMainThread::getNodeInfo()->addFileToFilesInNetwork(tmpHash, sendingIp);
+                             << fileName <<  " - " << NetUtils::netIpToStringIp(sendingIp)<< std::endl;
+                    NetMainThread::getNodeInfo()->addFileToFilesInNetwork(fileName, sendingIp);
                 }
         }
     } while (readBytes != 0);

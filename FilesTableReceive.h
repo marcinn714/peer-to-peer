@@ -6,6 +6,7 @@
 #define FILESTABLERECEIVE_H_
 
 #include "Command.hpp"
+#include "netCommunication/TcpCommunication.h"
 #include <cstdlib>
 #include <string.h>
 #include <unistd.h>
@@ -18,14 +19,20 @@
 class FilesTableReceive: public Command
 {
 public:
-    explicit FilesTableReceive( int _socketFd, struct in_addr ip) : socketFd(_socketFd) {sendingIp = ip; };
+    FilesTableReceive( int _socketFd, struct in_addr ip) : socketFd(_socketFd) {
+        sendingIp = ip;
+        tcpCommunication = new TcpCommunication();
+    };
+
     virtual ~FilesTableReceive() {};
 
     void execute();
     bool reqSeparateThread(void) {	return true; }
+
 private:
     int socketFd;
     struct in_addr sendingIp;
+    TcpCommunication * tcpCommunication;
 };
 
 #endif /* FILESTABLERECEIVE_H_ */

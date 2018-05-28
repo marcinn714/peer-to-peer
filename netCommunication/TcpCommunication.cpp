@@ -74,8 +74,8 @@ void TcpCommunication::closeSocket() {
     close(sock);
 }
 
-ssize_t TcpCommunication::readData(int socket, char *fileName, int size) {
-    return read(socket, fileName, size);
+ssize_t TcpCommunication::readData(int socket, char *buf, int size) {
+    return read(socket, buf, size);
 }
 
 bool TcpCommunication::sendFilesTable(std::string *stringData, struct in_addr targetNodeIP) {
