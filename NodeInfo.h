@@ -24,6 +24,7 @@ public:
 
     void addLocalFile(std::string fileName);
     void removeLocalFile(std::string fileName);
+    bool containsLocalFile(std::string fileName);
 
     void addNewNode(struct in_addr ip);
     void removeNode(struct in_addr ip);

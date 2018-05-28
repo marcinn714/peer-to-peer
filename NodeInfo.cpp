@@ -36,3 +36,7 @@ struct in_addr NodeInfo::getFileOwner(std::string fileName) {
 
     return it->second;
 }
+
+bool NodeInfo::containsLocalFile(std::string fileName) {
+    return files.find(fileName) != files.end();
+}

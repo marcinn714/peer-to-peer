@@ -9,10 +9,14 @@
 #include <string>
 
 void SendFileTcp::execute(void) {
+    if (NetMainThread::getNodeInfo()->containsLocalFile(msg.hash))
+        std::cout << "File is no longer available" << std::endl;
+
+
     std::string fileStr;
     std::ifstream file(msg.hash, std::ios::in | std::ios::binary);
     if (!file) {
-        std::cout << "Couldn't open file" << std::endl;
+        std::cout << "File is no longer available" << std::endl;
         return;
     }
     file.seekg(0, std::ios::end); //how big is file
