@@ -17,7 +17,7 @@ void FilesTableReceive::execute()
 
     do {
         memset(buf, 0, sizeof(buf));
-        if ((readBytes = tcpCommunication->readData(socketFd,buf, bufSize)) == -1)
+        if ((readBytes = tcpCommunication->readData(socket,buf, bufSize)) == -1)
             perror("reading stream message");
         if (readBytes != 0)
         {
@@ -30,5 +30,5 @@ void FilesTableReceive::execute()
                 }
         }
     } while (readBytes != 0);
-    close(socketFd);
+    close(socket);
 }

@@ -11,18 +11,14 @@
 
 class InfoMessage {
 public:
-    InfoMessage(size_t opcode = 0);
-    InfoMessage(size_t _opcode, std::string fileName);
-    InfoMessage(size_t _opcode, size_t myId, std::string _hash);
-    InfoMessage(size_t _opcode, size_t nodeCnt, size_t senderId);
+    InfoMessage(char opcode = 0);
+    InfoMessage(char _opcode, std::string fileName);
     InfoMessage(const InfoMessage & other);
     void fillName();
-    size_t opcode;
-    size_t firstField;
-    size_t secondField;
-    size_t thirdField;
-    static const int FILE_NAME_SIZE = 33;
+    char opcode;
+    static const int FILE_NAME_SIZE = 31;
     char hash[FILE_NAME_SIZE];
+    char * converToByte();
 };
 
 

@@ -5,6 +5,7 @@
 #include <zconf.h>
 #include <cstring>
 #include <arpa/inet.h>
+#include <iostream>
 #include "UdpCommunication.h"
 #include "NetUtils.h"
 
@@ -60,7 +61,7 @@ bool UdpCommunication::sendBroadcastInfoMsgUDP(InfoMessage * msg, unsigned port)
 
     if (inet_aton(broadcastAddress.c_str() , &commonSocketAddrIn.sin_addr) == 0)//przypisanie adresu odbiorcy (broadcast)
         return false;
-    if (sendto(commonSocketFd, msg, sizeof(*msg), 0, (struct sockaddr*) &commonSocketAddrIn, slen) < 0)
+    if (sendto(commonSocketFd, msg->converToByte(), 32, 0, (struct sockaddr*) &commonSocketAddrIn, slen) < 0)
         return false;
 
     close(commonSocketFd);

@@ -19,7 +19,7 @@
 class FilesTableReceive: public Command
 {
 public:
-    FilesTableReceive( int _socketFd, struct in_addr ip) : socketFd(_socketFd) {
+    FilesTableReceive( int _socket, struct in_addr ip) : socket(_socket) {
         sendingIp = ip;
         tcpCommunication = new TcpCommunication();
     };
@@ -30,7 +30,7 @@ public:
     bool reqSeparateThread(void) {	return true; }
 
 private:
-    int socketFd;
+    int socket;
     struct in_addr sendingIp;
     TcpCommunication * tcpCommunication;
 };

@@ -13,18 +13,18 @@
 class AddFile: public Command
 {
 public:
-    AddFile(std::string _param) : param(_param) {}
+    AddFile(std::string _fileName) : fileName(_fileName) {}
     virtual ~AddFile() {}
 
     void execute(void) {
-        std::ifstream file(param.c_str());
+        std::ifstream file(fileName.c_str());
         if (!file.is_open()) {
             std::cout << "There is no such file in working directory" << std::endl;
             return;
         }
         NodeInfo* nodeInfo = NetMainThread::getNodeInfo();
         if (nodeInfo != nullptr) {
-            nodeInfo->addLocalFile(param);
+            nodeInfo->addLocalFile(fileName);
         }
         else {
             std::cout << "Couldn't add new file" << std::endl;
@@ -35,7 +35,7 @@ public:
 
     bool reqSeparateThread(void) {return true;}
 private:
-    std::string param;
+    std::string fileName;
 };
 
 #endif /* ADDNODE_H_ */

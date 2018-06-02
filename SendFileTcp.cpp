@@ -10,7 +10,6 @@
 
 void SendFileTcp::execute(void) {
     if (!NetMainThread::getNodeInfo()->containsLocalFile(msg.hash)) {
-        std::cout << "File is no longer available" << std::endl;
         UdpCommunication::sendInfoMsgUDP(new InfoMessage(401), ip, NetMainThread::port);
         return;
     }
@@ -19,7 +18,6 @@ void SendFileTcp::execute(void) {
     std::string fileStr;
     std::ifstream file(msg.hash, std::ios::in | std::ios::binary);
     if (!file) {
-        std::cout << "File is no longer available" << std::endl;
         UdpCommunication::sendInfoMsgUDP(new InfoMessage(401), ip, NetMainThread::port);
         return;
     }
