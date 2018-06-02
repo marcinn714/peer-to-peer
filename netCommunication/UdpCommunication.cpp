@@ -99,7 +99,8 @@ ssize_t UdpCommunication::receiveInfoMsgUDP(InfoMessage *msg, unsigned port, str
     }
 
     ssize_t recv_len;
-    if ((recv_len = recvfrom(commonSocketFd, msg, sizeof(*msg), 0, (struct sockaddr *) commonSocketAddrIn, &slen)) < 0 && !timeout) {
+    char buf[32];
+    if ((recv_len = recvfrom(commonSocketFd, buf, 32, 0, (struct sockaddr *) commonSocketAddrIn, &slen)) < 0 && !timeout) {
         return 0;
     }
 
