@@ -120,7 +120,7 @@ void NetMainThread::joinNetwork(InfoMessage * msg) {
 
 int NetMainThread::init(void)
 {
-    InfoMessage * msg = new InfoMessage(100);
+    InfoMessage * msg = new InfoMessage(10);
     udpCommunication->sendBroadcastInfoMsgUDP(msg, port);
     std::cout<<"Sent joining to network request" <<std::endl;
 
