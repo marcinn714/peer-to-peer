@@ -21,7 +21,7 @@ public:
     static NodeInfo * nodeInfo;
     static const unsigned port = 8888;
     static const unsigned joinNetworkPort = 8889;
-    static const unsigned maxTimeToJoinP2P = 2;
+    static const unsigned maxTimeToJoinP2P = 5;
 
 
     NetMainThread();

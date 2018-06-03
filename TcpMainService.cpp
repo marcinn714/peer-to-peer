@@ -10,10 +10,10 @@ Command * TcpMainService::getCommand(size_t opcode, int socketFd, struct in_addr
 {
     Command * command = nullptr;
     switch(opcode){
-        case 301: //get file
+        case 31: //get file
             command = new ReceiveFileTcp(socketFd);
             break;
-        case 300: //get local files table
+        case 30: //get local files table
             command = new FilesTableReceive(socketFd, sendingIp);
             break;
         default:

@@ -9,7 +9,7 @@ void Leave::execute(void) {
     if (NetMainThread::getNodeInfo() == nullptr)
         return;
 
-    InfoMessage* msg = new InfoMessage(101);
+    InfoMessage* msg = new InfoMessage(11);
     udpCommunication->sendBroadcastInfoMsgUDP(msg, NetMainThread::port);
     delete msg;
 }

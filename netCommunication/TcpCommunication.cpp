@@ -20,9 +20,9 @@ bool TcpCommunication::sendFileTCP(std::string fileName, std::string* stringFile
     if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         return false;
 
-    size_t opcode = 301;
+    char opcode = 31;
 
-    write(sockfd, &opcode, sizeof(size_t));
+    write(sockfd, &opcode, sizeof(opcode));
     write(sockfd, fileName.c_str(), InfoMessage::FILE_NAME_SIZE);
     write(sockfd, stringFile->c_str(), stringFile->size());
 
@@ -30,15 +30,15 @@ bool TcpCommunication::sendFileTCP(std::string fileName, std::string* stringFile
     return true;
 }
 
-size_t TcpCommunication::receiveOpcode(int * msgsock, struct sockaddr_in *client) {
-    size_t opcode;
+char TcpCommunication::receiveOpcode(int * msgsock, struct sockaddr_in *client) {
+    char opcode;
     int readBytes;
     unsigned addrlen = sizeof(*client);
     if ((*msgsock = accept(sock, (struct sockaddr *) client, &addrlen)) < 0) {
         perror("accept");
     } else {
         memset(&opcode, 0, sizeof(opcode));
-        if ((readBytes = read(*msgsock, &opcode, sizeof(size_t))) == -1)
+        if ((readBytes = read(*msgsock, &opcode, sizeof(opcode))) == -1)
             perror("reading stream message");
         if (readBytes == 0)
             std::cout << "Ending connection" << std::endl;
@@ -92,9 +92,10 @@ bool TcpCommunication::sendFilesTable(std::string *stringData, struct in_addr ta
     if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         return false;
 
-    size_t opcode = 300;
-    write(sockfd, &opcode, sizeof(size_t));
+    size_t opcode = 30;
+    write(sockfd, &opcode, sizeof(opcode));
     write(sockfd, stringData->c_str(), stringData->size());
+    std::cout << opcode << std::endl;
 
     close(sockfd);
     return true;

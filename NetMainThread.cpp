@@ -42,22 +42,22 @@ void NetMainThread::receiveNetworkMessages(void) {
     InfoMessage * msg = new InfoMessage();
     while (udpCommunication->receiveInfoMsgUDP(msg, port, &socketAddrIn)) {
         switch(msg->opcode) {
-            case 100: //new node wants to join
+            case 10: //new node wants to join
             {
 
-                msg->opcode = 200;
+                msg->opcode = 20;
                 udpCommunication->sendInfoMsgUDP(msg, socketAddrIn.sin_addr, joinNetworkPort);
                 nodeInfo->addNewNode(socketAddrIn.sin_addr);
                 break;
             }
-            case 101: //node wants to leave (this node or another)
+            case 11: //node wants to leave (this node or another)
             {
                 nodeInfo->removeNode(socketAddrIn.sin_addr);
                 pthread_cancel(tcpThread);
                 Command::exitCommand(this);
                 break;
             }
-            case 102: //other node wants local files table
+            case 12: //other node wants local files table
             {
                 pthread_t thread;
                 Command * sendFilesTable = new FilesTableSend(socketAddrIn.sin_addr);
@@ -65,7 +65,7 @@ void NetMainThread::receiveNetworkMessages(void) {
                 pthread_detach(thread);
                 break;
             }
-            case 103: //other node wants to get file from this node's local files
+            case 13: //other node wants to get file from this node's local files
             {
                 pthread_t thread;
                 Command* sendFileTcp = new SendFileTcp(*msg, socketAddrIn.sin_addr);
@@ -73,17 +73,18 @@ void NetMainThread::receiveNetworkMessages(void) {
                 pthread_detach(thread);
                 break;
             }
-            case 400: //exceptional situation when more than 1 new nodes want to join simultaneously
+            case 40: //exceptional situation when more than 1 new nodes want to join simultaneously
             {
                 std::cout << "Failed when joining to network" << std::endl;
                 pthread_cancel(tcpThread);
                 delete this;
                 exit(1);
             }
-            case 401:
+            case 41:
             {
                 std::cout << "File no longer available" << std::endl;
             }
+            std::cout << "";
         }
     }
     delete msg;
@@ -93,25 +94,25 @@ void NetMainThread::buildNetwork(void) {
     firstNode = true;
     std::cout << "Didn't receive any response\nStart building new P2P network... ";
     nodeInfo = new NodeInfo();
-    InfoMessage * msg = new InfoMessage(400); //if another node's waiting for response
+    InfoMessage * msg = new InfoMessage(40); //if another node's waiting for response
     udpCommunication->sendBroadcastInfoMsgUDP(msg, joinNetworkPort);
     std::cout << "Completed" << std::endl;
     delete msg;
 }
 
 void NetMainThread::joinNetwork(InfoMessage * msg) {
-    if (msg->opcode == 400) {
+    if (msg->opcode == 40) {
         std::cout << "Another node's building P2P network right now" << std::endl;
         Command::exitCommand(this);
     }
     firstNode = false;
-    if (msg->opcode == 200) {
+    if (msg->opcode == 20) {
         nodeInfo = new NodeInfo();
         nodeInfo->addNewNode(socketAddrIn.sin_addr);
     }
 
     while((udpCommunication->receiveInfoMsgUDP(msg, joinNetworkPort, &socketAddrIn, 2)) > 0) {
-        if (msg->opcode == 200) { //msg about network (cnt, sender id, receiver id)
+        if (msg->opcode == 20) { //msg about network (cnt, sender id, receiver id)
             nodeInfo->addNewNode(socketAddrIn.sin_addr);
         }
     }

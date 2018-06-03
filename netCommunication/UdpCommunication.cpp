@@ -32,7 +32,8 @@ bool UdpCommunication::sendInfoMsgUDP(InfoMessage * msg, struct in_addr nodeAddr
     commonSocketAddrIn.sin_port = htons(port);
     commonSocketAddrIn.sin_addr = nodeAddr;
 
-    if (sendto(commonSocketFd, msg, sizeof(*msg), 0, (struct sockaddr*) &commonSocketAddrIn, slen) < 0)
+
+    if (sendto(commonSocketFd, msg->converToByte(), 32, 0, (struct sockaddr*) &commonSocketAddrIn, slen) < 0)
         return false;
 
     close(commonSocketFd);
@@ -103,7 +104,8 @@ ssize_t UdpCommunication::receiveInfoMsgUDP(InfoMessage *msg, unsigned port, str
     if ((recv_len = recvfrom(commonSocketFd, buf, 32, 0, (struct sockaddr *) commonSocketAddrIn, &slen)) < 0 && !timeout) {
         return 0;
     }
-
+    msg->fillInfoMessage(buf);
+    std::cout << msg->opcode << std::endl;
     close(commonSocketFd);
 
     return recv_len;

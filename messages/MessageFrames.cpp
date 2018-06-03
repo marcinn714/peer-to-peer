@@ -18,6 +18,7 @@ InfoMessage::InfoMessage(char _opcode) {
 }
 
 
+
 InfoMessage::InfoMessage(const InfoMessage & other)
 {
     opcode = other.opcode;
@@ -26,8 +27,13 @@ InfoMessage::InfoMessage(const InfoMessage & other)
 
 
 char* InfoMessage::converToByte() {
-    char * buf = new char[33];
+    char * buf = new char[32];
     buf[0] = opcode;
     strcpy(&buf[1], hash);
     return buf;
+}
+
+void InfoMessage::fillInfoMessage(char *buf) {
+    opcode = buf[0];
+    strcpy(hash, &buf[1]);
 }

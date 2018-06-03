@@ -19,6 +19,7 @@ public:
     static const int FILE_NAME_SIZE = 31;
     char hash[FILE_NAME_SIZE];
     char * converToByte();
+    void fillInfoMessage(char *buf);
 };
 
 
